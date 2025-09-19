@@ -10,7 +10,10 @@ exports.getCharacter = asyncHandler(async (userId) => {
 });
 
 exports.updateCharacter = asyncHandler(async (userId, data) => {
-  const character = await Character.findOne({ where: { user_id: userId } });
+  const character = await Character.findOne({
+    attributes: ["username", "bio", "avatar_url"],
+    where: { user_id: userId },
+  });
   if (!character) {
     throw new Error("Tidak ada karakter");
   }

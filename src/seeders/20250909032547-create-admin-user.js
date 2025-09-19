@@ -8,148 +8,129 @@ module.exports = {
     const now = new Date();
 
     const hashedPassword = await bcrypt.hash("admin123", 12);
-    const adminUserId = uuidv4();
-    const guruUserId = uuidv4();
 
+    // Define users data
+    const usersData = [
+      {
+        id: uuidv4(),
+        name: "Administrator",
+        email: "admin@eduquests.com",
+        roleName: "Admin",
+        username: "admin",
+      },
+      {
+        id: uuidv4(),
+        name: "Guru",
+        email: "guru@eduquests.com",
+        roleName: "Guru",
+        username: "guru",
+      },
+      {
+        id: uuidv4(),
+        name: "Murid",
+        email: "murid@eduquests.com",
+        roleName: "Murid",
+        username: "murid",
+      },
+    ];
+
+    // Insert users
     await queryInterface.bulkInsert(
       "users",
-      [
-        {
-          id: adminUserId,
-          name: "Administrator",
-          email: "admin@eduquests.com",
-          password: hashedPassword,
-          email_verified_at: now,
-          created_at: now,
-          updated_at: now,
-        },
-        {
-          id: guruUserId,
-          name: "Guru",
-          email: "guru@eduquests.com",
-          password: hashedPassword,
-          email_verified_at: now,
-          created_at: now,
-          updated_at: now,
-        },
-      ],
+      usersData.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: hashedPassword,
+        email_verified_at: now,
+        created_at: now,
+        updated_at: now,
+      })),
       {}
     );
 
-    /**
-     * ambil role Admin dari tabel roles
-     */
-    const [adminRole] = await queryInterface.sequelize.query(
-      "SELECT id FROM roles WHERE name = 'Admin' LIMIT 1",
+    // Get all roles
+    const roles = await queryInterface.sequelize.query(
+      "SELECT id, name FROM roles",
       { type: queryInterface.sequelize.QueryTypes.SELECT }
     );
 
-    /**
-     * ambil role Guru dari tabel roles
-     */
-    const [guruRole] = await queryInterface.sequelize.query(
-      "SELECT id FROM roles WHERE name = 'Guru' LIMIT 1",
-      { type: queryInterface.sequelize.QueryTypes.SELECT }
-    );
+    const roleMap = {};
+    roles.forEach((role) => {
+      roleMap[role.name] = role.id;
+    });
 
-    /**
-     * assign role Admin ke user admin yang baru dibuat
-     */
-    if (adminRole) {
-      await queryInterface.bulkInsert(
-        "user_roles",
-        [
-          {
-            user_id: adminUserId,
-            role_id: adminRole.id,
+    // Assign roles to users
+    const userRolesData = usersData
+      .map((user) => {
+        const roleId = roleMap[user.roleName];
+        if (roleId) {
+          return {
+            user_id: user.id,
+            role_id: roleId,
             created_at: now,
             updated_at: now,
-          },
-        ],
-        {}
-      );
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    if (userRolesData.length > 0) {
+      await queryInterface.bulkInsert("user_roles", userRolesData, {});
     }
 
-    /**
-     * assign role Guru ke user guru yang baru dibuat
-     */
-    if (guruRole) {
-      await queryInterface.bulkInsert(
-        "user_roles",
-        [
-          {
-            user_id: guruUserId,
-            role_id: guruRole.id,
-            created_at: now,
-            updated_at: now,
-          },
-        ],
-        {}
-      );
-    }
+    // Create characters for all users
+    const charactersData = usersData.map((user) => ({
+      id: uuidv4(),
+      username: user.username,
+      user_id: user.id,
+      bio: null,
+      avatar_url: null,
+      created_at: now,
+      updated_at: now,
+    }));
 
-    /**
-     * buat character untuk admin dan guru dengan data kosong
-     */
-    await queryInterface.bulkInsert(
-      "characters",
-      [
-        {
-          id: uuidv4(),
-          username: "admin",
-          user_id: adminUserId,
-          bio: null,
-          avatar_url: null,
-          created_at: now,
-          updated_at: now,
-        },
-        {
-          id: uuidv4(),
-          username: "guru",
-          user_id: guruUserId,
-          bio: null,
-          avatar_url: null,
-          created_at: now,
-          updated_at: now,
-        },
-      ],
-      {}
-    );
+    await queryInterface.bulkInsert("characters", charactersData, {});
   },
 
   async down(queryInterface, Sequelize) {
-    // Hapus characters untuk admin dan guru
+    // Hapus characters untuk semua user demo
     await queryInterface.bulkDelete(
       "characters",
       {
         user_id: {
           [Sequelize.Op.in]: queryInterface.sequelize.literal(
-            "(SELECT id FROM users WHERE email IN ('admin@eduquests.com', 'guru@eduquests.com'))"
+            "(SELECT id FROM users WHERE email IN ('admin@eduquests.com', 'guru@eduquests.com', 'murid@eduquests.com'))"
           ),
         },
       },
       {}
     );
 
-    // Hapus user_roles untuk admin dan guru
+    // Hapus user_roles untuk semua user demo
     await queryInterface.bulkDelete(
       "user_roles",
       {
         user_id: {
           [Sequelize.Op.in]: queryInterface.sequelize.literal(
-            "(SELECT id FROM users WHERE email IN ('admin@eduquests.com', 'guru@eduquests.com'))"
+            "(SELECT id FROM users WHERE email IN ('admin@eduquests.com', 'guru@eduquests.com', 'murid@eduquests.com'))"
           ),
         },
       },
       {}
     );
 
-    // Hapus users admin dan guru
+    // Hapus users demo
     await queryInterface.bulkDelete(
       "users",
       {
         email: {
-          [Sequelize.Op.in]: ["admin@eduquests.com", "guru@eduquests.com"],
+          [Sequelize.Op.in]: [
+            "admin@eduquests.com",
+            "guru@eduquests.com",
+            "murid@eduquests.com",
+          ],
         },
       },
       {}

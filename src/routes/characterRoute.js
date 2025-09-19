@@ -3,8 +3,7 @@ const router = express.Router();
 
 const { validateUpsertCharacter } = require("../validators/characterValidate");
 const { authenticateToken } = require("../middlewares/authMiddleware");
-const { index } = require("../controllers/characterController");
-const { update } = require("../controllers/badgeController");
+const { index, update } = require("../controllers/characterController");
 
 router.get("/", authenticateToken, index);
 router.put("/", authenticateToken, validateUpsertCharacter, update);

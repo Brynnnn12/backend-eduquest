@@ -2,12 +2,12 @@ const { User, Role } = require("../models");
 const { verifyAccessToken } = require("../utils/generateToken");
 
 /**
- * Middleware untuk autentikasi token
+ * Middleware untuk autentikasi token JWT
  */
 exports.authenticateToken = async (req, res, next) => {
   try {
     const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1]; // Bearer TOKEN
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({
@@ -20,24 +20,19 @@ exports.authenticateToken = async (req, res, next) => {
     if (!decoded) {
       return res.status(403).json({
         success: false,
-        //tambahkan login terlebih dahulu
         message: "Token tidak valid, silahkan login ulang",
       });
     }
 
     // Get user dengan roles
     const user = await User.findByPk(decoded.id, {
-      include: [
-        {
-          model: Role,
-        },
-      ],
+      include: [{ model: Role }],
     });
 
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User tidak ditemukan",
+        message: "User tidak ditemukan, silahkan login terlebih dahulu",
       });
     }
 
@@ -54,7 +49,7 @@ exports.authenticateToken = async (req, res, next) => {
 
 /**
  * Middleware untuk cek role user
- * @param {string|string[]} allowedRoles - Role yang diizinkan (string atau array)
+ * @param {string|string[]} allowedRoles - Role yang diizinkan
  */
 exports.checkRole = (allowedRoles) => {
   return (req, res, next) => {
@@ -66,19 +61,15 @@ exports.checkRole = (allowedRoles) => {
         });
       }
 
-      // Pastikan allowedRoles adalah array
       const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-
-      // Cek apakah user memiliki salah satu role yang diizinkan
-      const hasRole = req.user.Roles.some((userRole) =>
-        roles.includes(userRole.name)
-      );
+      const userRoles = req.user.Roles.map((role) => role.name);
+      const hasRole = userRoles.some((role) => roles.includes(role));
 
       if (!hasRole) {
         return res.status(403).json({
           success: false,
           message: `Access denied. Required roles: ${roles.join(", ")}`,
-          userRoles: req.user.Roles.map((role) => role.name),
+          userRoles,
         });
       }
 
@@ -94,14 +85,16 @@ exports.checkRole = (allowedRoles) => {
 };
 
 /**
- * Middleware khusus untuk admin saja
+ * Middleware khusus untuk role tertentu
  */
 exports.adminOnly = exports.checkRole("Admin");
+exports.guruOnly = exports.checkRole("Guru");
+exports.muridOnly = exports.checkRole("Murid");
 
 /**
- * Middleware untuk admin atau user (authenticated users)
+ * Middleware untuk authenticated users (semua role)
  */
-exports.authenticatedOnly = exports.checkRole(["Admin", "User"]);
+exports.authenticatedOnly = exports.checkRole(["Admin", "Guru"]);
 
 /**
  * Middleware untuk cek apakah user adalah pemilik resource atau admin
@@ -117,10 +110,7 @@ exports.ownerOrAdmin = (resourceUserIdParam = "userId") => {
         });
       }
 
-      // Cek apakah user adalah admin
       const isAdmin = req.user.Roles.some((role) => role.name === "Admin");
-
-      // Cek apakah user adalah pemilik resource
       const resourceUserId =
         req.params[resourceUserIdParam] || req.body[resourceUserIdParam];
       const isOwner = req.user.id === resourceUserId;

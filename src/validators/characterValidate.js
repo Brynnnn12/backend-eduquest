@@ -2,8 +2,7 @@ const { body, validationResult } = require("express-validator");
 
 exports.validateUpsertCharacter = [
   body("username")
-    .notEmpty()
-    .withMessage("Username wajib diisi")
+    .optional()
     .isLength({ min: 3, max: 50 })
     .withMessage("Username harus 3-50 karakter"),
   body("bio")
@@ -11,8 +10,7 @@ exports.validateUpsertCharacter = [
     .isLength({ max: 160 })
     .withMessage("Bio maksimal 160 karakter"),
   body("avatar_url")
-    .notEmpty()
-    .withMessage("Avatar URL wajib diisi")
+    .optional()
     .isURL()
     .withMessage("Avatar URL harus berupa URL valid"),
   // Tidak perlu validasi bio, karena nullable
