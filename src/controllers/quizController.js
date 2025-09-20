@@ -1,8 +1,10 @@
 const { getQuiz, updateQuiz, deleteQuiz } = require("../services/quizService");
 const { responseSuccess } = require("../utils/response");
 const asyncHandler = require("express-async-handler");
-const { Mission, Quiz, Progres, Badge } = require("../models");
+const { Mission, Quiz, Progres, Badge, AiContentLog } = require("../models");
 const { checkAndAssignBadge } = require("../services/userBadgeService");
+const aiContentService = require("../services/aiContentService");
+const { generateHint, generateSolution } = require("../utils/aiHelper");
 
 exports.index = asyncHandler(async (req, res) => {
   const result = await getQuiz(req.query);
@@ -29,6 +31,8 @@ exports.destroy = asyncHandler(async (req, res) => {
   responseSuccess(res, 200, "Berhasil Menghapus Quiz", result);
 });
 
+// ...existing code...
+
 exports.submitAnswers = asyncHandler(async (req, res) => {
   const { mission_id, answers } = req.body;
   const user_id = req.user.id;
@@ -47,13 +51,26 @@ exports.submitAnswers = asyncHandler(async (req, res) => {
 
   let score = 0;
   const totalQuestions = quizzes.length;
-  const pointsPerQuestion = mission.points / totalQuestions; // Misal 100 / 10 = 10 poin
+  const pointsPerQuestion =
+    totalQuestions > 0 ? mission.points / totalQuestions : 0; // Hindari division by zero
 
   // Cek jawaban user
   answers.forEach((answer) => {
     const quiz = quizzes.find((q) => q.id === answer.quiz_id);
-    if (quiz && quiz.answer === answer.user_answer) {
-      score += pointsPerQuestion; // Tambah poin per jawaban benar
+    if (quiz) {
+      console.log(
+        `Quiz ID: ${quiz.id}, Correct Answer: ${quiz.answer}, User Answer: ${answer.user_answer}`
+      ); // Debug log
+      if (
+        quiz.answer.trim().toLowerCase() ===
+        answer.user_answer.trim().toLowerCase()
+      ) {
+        // Case-insensitive dan trim
+        score += pointsPerQuestion;
+        console.log(`Correct! Score added: ${pointsPerQuestion}`); // Debug log
+      }
+    } else {
+      console.log(`Quiz not found for ID: ${answer.quiz_id}`); // Debug log
     }
   });
 
@@ -87,4 +104,89 @@ exports.submitAnswers = asyncHandler(async (req, res) => {
     status: progress.status,
     progress,
   });
+});
+
+// ...existing code...
+
+exports.getHint = asyncHandler(async (req, res) => {
+  const { quizId } = req.params;
+  const userId = req.user.id;
+
+  // 1. Cek sudah berapa kali hint dipakai user untuk quiz ini
+  const hintCount = await AiContentLog.count({
+    where: {
+      user_id: userId,
+      action_type: "hint",
+      quiz_id: quizId,
+    },
+  });
+
+  // 2. Cek apakah user sudah pakai solution untuk quiz ini
+  const solutionCount = await AiContentLog.count({
+    where: {
+      user_id: userId,
+      action_type: "solution",
+      quiz_id: quizId,
+    },
+  });
+
+  if (solutionCount > 0) {
+    return res.status(400).json({
+      message: "Kamu sudah memakai solution, jadi tidak bisa pakai hint lagi.",
+    });
+  }
+
+  if (hintCount >= 2) {
+    return res
+      .status(400)
+      .json({ message: "Kamu sudah memakai semua hint (maks 2 kali)." });
+  }
+
+  // 3. Generate hint
+  const hint = await generateHint(quizId);
+
+  // 4. Simpan log
+  await aiContentService.createLog({
+    userId,
+    actionType: "hint",
+    prompt: `Generate hint for quiz ${quizId}`,
+    response: hint,
+    quizId,
+  });
+
+  responseSuccess(res, 200, "Berhasil mendapatkan hint", { hint });
+});
+
+exports.getSolution = asyncHandler(async (req, res) => {
+  const { quizId } = req.params;
+  const userId = req.user.id;
+
+  // 1. Cek sudah berapa kali solution dipakai user untuk quiz ini
+  const solutionCount = await AiContentLog.count({
+    where: {
+      user_id: userId,
+      action_type: "solution",
+      quiz_id: quizId,
+    },
+  });
+
+  if (solutionCount >= 1) {
+    return res
+      .status(400)
+      .json({ message: "Kamu sudah memakai solution (maks 1 kali)." });
+  }
+
+  // 2. Generate solution
+  const solution = await generateSolution(quizId);
+
+  // 3. Simpan log
+  await aiContentService.createLog({
+    userId,
+    actionType: "solution",
+    prompt: `Generate solution for quiz ${quizId}`,
+    response: solution,
+    quizId,
+  });
+
+  responseSuccess(res, 200, "Berhasil mendapatkan solusi", { solution });
 });

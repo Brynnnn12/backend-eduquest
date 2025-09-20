@@ -5,6 +5,8 @@ const {
   update,
   destroy,
   submitAnswers,
+  getHint,
+  getSolution,
 } = require("../controllers/quizController");
 const {
   authenticatedOnly,
@@ -18,6 +20,10 @@ router.post(
 
   submitAnswers
 );
+router.get("/:quizId/hint", authenticateToken, getHint);
+router.get("/:quizId/solution", authenticateToken, getSolution);
+router.post("/:quizId/submit", authenticateToken, submitAnswers);
+
 router.put("/:id", authenticateToken, authenticatedOnly, update);
 router.delete("/:id", authenticateToken, authenticatedOnly, destroy);
 
