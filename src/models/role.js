@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
         through: "user_roles",
         foreignKey: "role_id",
         otherKey: "user_id",
+        as: "Users",
       });
     }
   }

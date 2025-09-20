@@ -26,7 +26,7 @@ exports.authenticateToken = async (req, res, next) => {
 
     // Get user dengan roles
     const user = await User.findByPk(decoded.id, {
-      include: [{ model: Role }],
+      include: [{ model: Role, as: "Roles" }],
     });
 
     if (!user) {

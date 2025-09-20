@@ -47,7 +47,7 @@ exports.generateQuiz = asyncHandler(
       return JSON.parse(responseText); // return array quiz
     } catch (error) {
       console.error("Error parsing Gemini response:", error);
-      console.error("Response Text:", response.text); // Debug: lihat text yang gagal parse
+      // console.error("Response Text:", response.text); // Debug: lihat text yang gagal parse
       return [];
     }
   }

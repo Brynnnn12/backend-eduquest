@@ -13,7 +13,7 @@ exports.getAllBadges = asyncHandler(async (query) => {
   const order = getSorting(query, ["name", "created_at", "icon"]);
 
   const result = await Badge.findAndCountAll({
-    attributes: ["id", "name", "icon"],
+    attributes: ["id", "name", "description", "icon", "threshold"],
     where,
     order,
     limit,
@@ -27,49 +27,57 @@ exports.getAllBadges = asyncHandler(async (query) => {
     limit,
   };
 });
-exports.storeBadge = asyncHandler(async (name, file) => {
-  // Validasi name
-  if (!name) {
-    throw new Error("Nama badge wajib diisi");
+exports.storeBadge = asyncHandler(
+  async (name, description, threshold, file) => {
+    // Validasi name
+    if (!name) {
+      throw new Error("Nama badge wajib diisi");
+    }
+
+    // Cek duplikasi nama
+    const badge = await Badge.findOne({ where: { name } });
+    if (badge) {
+      throw new Error("Badge sudah ada");
+    }
+
+    // Simpan file icon
+    const icon = saveFile(file, "icons");
+
+    // Simpan ke database
+    const newBadge = await Badge.create({ name, description, threshold, icon });
+    return {
+      name: newBadge.name,
+      description: newBadge.description,
+      threshold: newBadge.threshold,
+      icon: newBadge.icon,
+    };
   }
+);
 
-  // Cek duplikasi nama
-  const badge = await Badge.findOne({ where: { name } });
-  if (badge) {
-    throw new Error("Badge sudah ada");
+exports.updateBadge = asyncHandler(
+  async (id, name, description, threshold, file) => {
+    const badge = await Badge.findByPk(id);
+    if (!badge) {
+      throw new Error("Badge tidak ditemukan");
+    }
+
+    // Jika ada file baru, hapus yang lama dan simpan yang baru
+    let icon = badge.icon;
+    if (file && file.buffer) {
+      deleteFileFromFolder(badge.icon, "icons");
+      icon = saveFile(file, "icons");
+    }
+
+    await badge.update({ name, description, threshold, icon });
+
+    return {
+      name: badge.name,
+      description: badge.description,
+      threshold: badge.threshold,
+      icon: badge.icon,
+    };
   }
-
-  // Simpan file icon
-  const icon = saveFile(file, "icons");
-
-  // Simpan ke database
-  const newBadge = await Badge.create({ name, icon });
-  return {
-    name: newBadge.name,
-    icon: newBadge.icon,
-  };
-});
-
-exports.updateBadge = asyncHandler(async (id, name, file) => {
-  const badge = await Badge.findByPk(id);
-  if (!badge) {
-    throw new Error("Badge tidak ditemukan");
-  }
-
-  // Jika ada file baru, hapus yang lama dan simpan yang baru
-  let icon = badge.icon;
-  if (file && file.buffer) {
-    deleteFileFromFolder(badge.icon, "icons");
-    icon = saveFile(file, "icons");
-  }
-
-  await badge.update({ name, icon });
-
-  return {
-    name: badge.name,
-    icon: badge.icon,
-  };
-});
+);
 
 exports.destroyBadge = asyncHandler(async (id) => {
   const badge = await Badge.findByPk(id);

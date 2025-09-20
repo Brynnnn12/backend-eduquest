@@ -8,7 +8,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Badge.belongsToMany(models.User, {
+        through: models.UserBadge,
+        foreignKey: "badge_id",
+        otherKey: "user_id",
+        as: "users",
+      });
     }
   }
   Badge.init(
@@ -27,9 +32,18 @@ module.exports = (sequelize, DataTypes) => {
           len: [1, 50],
         },
       },
+      description: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+      },
       icon: {
         type: DataTypes.STRING,
         allowNull: false,
+      },
+      threshold: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
       },
     },
     {

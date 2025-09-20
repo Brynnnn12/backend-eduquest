@@ -7,6 +7,7 @@ exports.getProfile = asyncHandler(async (userId) => {
     include: [
       {
         model: Role,
+        as: "Roles",
         attributes: ["name"],
         through: { attributes: [] },
       },

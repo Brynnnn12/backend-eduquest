@@ -1,11 +1,8 @@
 const { getQuiz, updateQuiz, deleteQuiz } = require("../services/quizService");
-const {
-  createProgress,
-  updateProgress,
-} = require("../services/progressService");
 const { responseSuccess } = require("../utils/response");
 const asyncHandler = require("express-async-handler");
-const { Mission, Quiz, Progres } = require("../models");
+const { Mission, Quiz, Progres, Badge } = require("../models");
+const { checkAndAssignBadge } = require("../services/userBadgeService");
 
 exports.index = asyncHandler(async (req, res) => {
   const result = await getQuiz(req.query);
@@ -76,6 +73,11 @@ exports.submitAnswers = asyncHandler(async (req, res) => {
     await progress.update(progressData);
   } else {
     progress = await Progres.create(progressData);
+  }
+
+  // Check for badge assignment if completed
+  if (isCompleted) {
+    await checkAndAssignBadge(user_id);
   }
 
   // Response sukses

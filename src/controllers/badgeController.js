@@ -13,17 +13,17 @@ exports.index = asyncHandler(async (req, res) => {
 });
 
 exports.store = asyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, description, threshold } = req.body;
 
-  const result = await storeBadge(name, req.file);
+  const result = await storeBadge(name, description, threshold, req.file);
   responseSuccess(res, 201, "Berhasil Menyimpan Badge", result);
 });
 
 exports.update = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, description, threshold } = req.body;
 
-  const result = await updateBadge(id, name, req.file);
+  const result = await updateBadge(id, name, description, threshold, req.file);
   responseSuccess(res, 200, "Berhasil Mengupdate Badge", result);
 });
 

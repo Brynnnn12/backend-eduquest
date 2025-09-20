@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         through: "user_roles",
         foreignKey: "user_id",
         otherKey: "role_id",
+        as: "Roles",
       });
       User.hasOne(models.Character, {
         foreignKey: "user_id",
@@ -23,6 +24,13 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Mission, {
         foreignKey: "created_by",
         as: "missions",
+      });
+
+      User.belongsToMany(models.Badge, {
+        through: models.UserBadge,
+        foreignKey: "user_id",
+        otherKey: "badge_id",
+        as: "badges",
       });
     }
   }

@@ -1,6 +1,7 @@
-const { Progres } = require("../models");
+const { Progres, Badge } = require("../models");
 const { getPagination } = require("../utils/queryHelper");
 const asyncHandler = require("express-async-handler");
+const { assignBadge } = require("./userBadgeService");
 
 exports.getProgress = asyncHandler(async (query) => {
   const { limit, offset, page } = getPagination(query);
@@ -26,20 +27,6 @@ exports.getProgress = asyncHandler(async (query) => {
       limit,
     },
   };
-});
-
-exports.createProgress = asyncHandler(async (data) => {
-  const progress = await Progres.create(data);
-  return progress;
-});
-
-exports.updateProgress = asyncHandler(async (id, data) => {
-  const progress = await Progres.findByPk(id);
-  if (!progress) {
-    throw new Error("Progress not found");
-  }
-  await progress.update(data);
-  return progress;
 });
 
 exports.deleteProgress = asyncHandler(async (id) => {

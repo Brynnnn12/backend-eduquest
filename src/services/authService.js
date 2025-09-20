@@ -61,6 +61,7 @@ exports.login = asyncHandler(async ({ email, password }) => {
     include: [
       {
         model: Role,
+        as: "Roles",
         through: { attributes: [] },
       },
     ],
