@@ -2,9 +2,12 @@ require("dotenv").config(); // Tambah ini untuk load .env
 
 const { GoogleGenAI } = require("@google/genai");
 
-const { Quiz } = require("../models");
+const { Quiz, Mission, Progres, AiContentLog } = require("../models");
 const { getPagination } = require("../utils/queryHelper");
 const asyncHandler = require("express-async-handler");
+const { checkAndAssignBadge } = require("./userBadgeService");
+const aiContentService = require("./aiContentService");
+const { generateHint, generateSolution } = require("../utils/aiHelper");
 
 const googleGenerativeAI = new GoogleGenAI({
   apiKey: process.env.AI_GEMINI_API_KEY,
@@ -89,4 +92,162 @@ exports.deleteQuiz = asyncHandler(async (id) => {
   }
   await quiz.destroy();
   return { message: "Quiz deleted successfully" };
+});
+
+exports.submitAnswers = asyncHandler(async (user_id, mission_id, answers) => {
+  // Ambil mission
+  const mission = await Mission.findByPk(mission_id);
+  if (!mission) {
+    throw new Error("Mission not found");
+  }
+
+  // Cek apakah user sudah pernah submit jawaban untuk mission ini
+  const existingProgress = await Progres.findOne({
+    where: { user_id, mission_id },
+  });
+  if (existingProgress) {
+    throw new Error(
+      "Anda sudah pernah menjawab quiz untuk misi ini. Tidak dapat submit ulang."
+    );
+  }
+
+  // Ambil semua quiz dari mission ini
+  const quizzes = await Quiz.findAll({ where: { mission_id } });
+  if (!quizzes || quizzes.length === 0) {
+    throw new Error("No quiz found for this mission");
+  }
+
+  let score = 0;
+  const totalQuestions = quizzes.length;
+  const pointsPerQuestion =
+    totalQuestions > 0 ? mission.points / totalQuestions : 0; // Hindari division by zero
+
+  // Cek jawaban user
+  answers.forEach((answer) => {
+    const quiz = quizzes.find((q) => q.id === answer.quiz_id);
+    if (quiz) {
+      // Konversi user_answer ke index (a=0, b=1, c=2, d=3)
+      const userAnswerIndex =
+        answer.user_answer.toLowerCase().charCodeAt(0) - 97; // 'a' = 0, 'b' = 1, etc.
+      const userSelectedAnswer = quiz.options[userAnswerIndex];
+
+      console.log(
+        `Quiz ID: ${quiz.id}, Correct Answer: ${quiz.answer}, User Answer: ${answer.user_answer} (${userSelectedAnswer})`
+      ); // Debug log
+
+      if (
+        userSelectedAnswer &&
+        quiz.answer.trim().toLowerCase() ===
+          userSelectedAnswer.trim().toLowerCase()
+      ) {
+        score += pointsPerQuestion;
+        console.log(`Correct! Score added: ${pointsPerQuestion}`); // Debug log
+      }
+    } else {
+      console.log(`Quiz not found for ID: ${answer.quiz_id}`); // Debug log
+    }
+  });
+
+  // Tentukan status
+  const isCompleted = score >= mission.points * 0.7; // Lulus kalau >= 70%
+  const progressData = {
+    user_id,
+    mission_id,
+    score,
+    status: isCompleted ? "completed" : "pending",
+    completed_at: isCompleted ? new Date() : null,
+  };
+
+  // Update atau create progress
+  let progress = await Progres.findOne({ where: { user_id, mission_id } });
+  if (progress) {
+    await progress.update(progressData);
+  } else {
+    progress = await Progres.create(progressData);
+  }
+
+  // Check for badge assignment if completed
+  if (isCompleted) {
+    await checkAndAssignBadge(user_id);
+  }
+
+  return {
+    score,
+    totalQuestions,
+    status: progress.status,
+    progress,
+  };
+});
+
+exports.getHint = asyncHandler(async (quizId, userId) => {
+  // 1. Cek sudah berapa kali hint dipakai user untuk quiz ini
+  const hintCount = await AiContentLog.count({
+    where: {
+      user_id: userId,
+      action_type: "hint",
+      quiz_id: quizId,
+    },
+  });
+
+  // 2. Cek apakah user sudah pakai solution untuk quiz ini
+  const solutionCount = await AiContentLog.count({
+    where: {
+      user_id: userId,
+      action_type: "solution",
+      quiz_id: quizId,
+    },
+  });
+
+  if (solutionCount > 0) {
+    throw new Error(
+      "Kamu sudah memakai solution, jadi tidak bisa pakai hint lagi."
+    );
+  }
+
+  if (hintCount >= 2) {
+    throw new Error("Kamu sudah memakai semua hint (maks 2 kali).");
+  }
+
+  // 3. Generate hint
+  const hint = await generateHint(quizId);
+
+  // 4. Simpan log
+  await aiContentService.createLog({
+    userId,
+    actionType: "hint",
+    prompt: `Generate hint for quiz ${quizId}`,
+    response: hint,
+    quizId,
+  });
+
+  return hint;
+});
+
+exports.getSolution = asyncHandler(async (quizId, userId) => {
+  // 1. Cek sudah berapa kali solution dipakai user untuk quiz ini
+  const solutionCount = await AiContentLog.count({
+    where: {
+      user_id: userId,
+      action_type: "solution",
+      quiz_id: quizId,
+    },
+  });
+
+  if (solutionCount >= 1) {
+    throw new Error("Kamu sudah memakai solution (maks 1 kali).");
+  }
+
+  // 2. Generate solution
+  const solution = await generateSolution(quizId);
+
+  // 3. Simpan log
+  await aiContentService.createLog({
+    userId,
+    actionType: "solution",
+    prompt: `Generate solution for quiz ${quizId}`,
+    response: solution,
+    quizId,
+  });
+
+  return solution;
 });

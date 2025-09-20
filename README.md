@@ -1,4 +1,4 @@
-# 🚀 Express Starter - Backend API
+# 🚀 EduQuest Backend API
 
 <div align="center">
   <img src="https://nodejs.org/static/images/logo.svg" alt="Node.js" width="80" height="80">
@@ -7,68 +7,118 @@
 </div>
 
 <div align="center">
-  <h3>Backend API lengkap dengan autentikasi JWT, role-based authorization, dan email modern</h3>
-  
-  ![Node.js](https://img.shields.io/badge/Node.js-18%2B-green?style=flat-square&logo=node.js)
-  ![Express.js](https://img.shields.io/badge/Express.js-5.1-blue?style=flat-square&logo=express)
-  ![MySQL](https://img.shields.io/badge/MySQL-8.0-orange?style=flat-square&logo=mysql)
-  ![Sequelize](https://img.shields.io/badge/Sequelize-6.37-red?style=flat-square&logo=sequelize)
-  ![JWT](https://img.shields.io/badge/JWT-Auth-purple?style=flat-square&logo=jsonwebtokens)
+  <h3>Backend API Edukasi Interaktif dengan AI-Powered Learning</h3>
+
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-green?style=flat-square&logo=node.js)
+![Express.js](https://img.shields.io/badge/Express.js-5.1-blue?style=flat-square&logo=express)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-orange?style=flat-square&logo=mysql)
+![Sequelize](https://img.shields.io/badge/Sequelize-6.37-red?style=flat-square&logo=sequelize)
+![JWT](https://img.shields.io/badge/JWT-Auth-purple?style=flat-square&logo=jsonwebtokens)
+![Google AI](https://img.shields.io/badge/Google%20AI-Gemini-blue?style=flat-square&logo=google)
+
 </div>
 
 ---
 
 ## 📖 **Deskripsi**
 
-Express Starter adalah template backend API yang siap pakai dan production-ready, dilengkapi dengan sistem autentikasi lengkap menggunakan JWT, role-based authorization, email templates modern yang responsif, custom logging dengan Morgan, dan berbagai fitur keamanan. Cocok untuk memulai proyek backend dengan cepat dan professional.
+EduQuest adalah platform edukasi interaktif yang menggunakan kecerdasan buatan (AI) untuk memberikan pengalaman belajar yang personal dan menarik. Backend API ini menyediakan sistem lengkap untuk manajemen misi pembelajaran, quiz interaktif, sistem badge reward, tracking progress siswa, dan fitur AI-powered hints serta solusi untuk membantu siswa dalam proses belajar.
+
+Platform ini dirancang khusus untuk siswa yang ingin belajar dengan cara yang lebih menyenangkan dan interaktif, dengan dukungan AI yang dapat memberikan bantuan personal saat siswa mengalami kesulitan.
 
 ## ✨ **Fitur Utama**
 
 ### 🔐 **Sistem Autentikasi & Otorisasi**
 
-- ✅ Registrasi dengan verifikasi email otomatis
+- ✅ Registrasi siswa dengan verifikasi email otomatis
 - ✅ Login dengan JWT (Access & Refresh Token)
-- ✅ Forgot & Reset Password melalui email
-- ✅ Role-based Authorization (Admin & User)
+- ✅ Role-based Authorization (Admin & Student)
 - ✅ Middleware keamanan untuk proteksi route
 - ✅ Logout dengan blacklist token
+- ✅ Forgot & Reset Password melalui email
+
+### 🎓 **Sistem Pembelajaran Interaktif**
+
+- ✅ **Misi Pembelajaran** - Sistem misi dengan poin dan tingkat kesulitan
+- ✅ **Quiz Dinamis** - Quiz otomatis di-generate menggunakan AI Gemini
+- ✅ **Progress Tracking** - Pelacakan kemajuan belajar siswa secara real-time
+- ✅ **Badge System** - Sistem reward dengan badge untuk motivasi belajar
+- ✅ **Character System** - Sistem karakter untuk personalisasi pengalaman
+
+### 🤖 **AI-Powered Learning Assistant**
+
+- ✅ **Hint Generator** - AI memberikan petunjuk saat siswa kesulitan (maks 2 kali per quiz)
+- ✅ **Solution Provider** - AI memberikan solusi lengkap (maks 1 kali per quiz)
+- ✅ **Quiz Auto-Generation** - AI membuat soal quiz berdasarkan materi pembelajaran
+- ✅ **Content Logging** - Pelacakan penggunaan fitur AI untuk analisis
+
+### 📊 **Dashboard & Analytics**
+
+- ✅ **Progress Analytics** - Analisis kemajuan belajar siswa
+- ✅ **Badge Achievement** - Sistem pencapaian dan reward
+- ✅ **Mission Completion** - Tracking penyelesaian misi
+- ✅ **Score Management** - Manajemen skor dan nilai quiz
 
 ### 📧 **Email System**
 
 - ✅ Template email HTML modern & responsif dengan animasi
-- ✅ Email verifikasi account dengan link aktivasi
+- ✅ Email verifikasi account siswa baru
 - ✅ Email reset password dengan token aman
 - ✅ Welcome email setelah verifikasi berhasil
 - ✅ Fallback untuk development mode (console logging)
-- ✅ Support multiple email providers
 
-### 🗄️ **Database & ORM**
+## 🗄️ **Database & Model**
 
-- ✅ MySQL dengan Sequelize ORM v6.37.7
-- ✅ Migration & Seeding system yang lengkap
-- ✅ Model relationships (User-Role many-to-many via pivot table)
-- ✅ UUID sebagai primary key untuk keamanan
-- ✅ Snake_case column naming untuk konsistensi
-- ✅ Password hashing dengan bcryptjs
+### **Models yang Tersedia**
 
-### 🛡️ **Keamanan**
+| Model            | Deskripsi                    | Relasi                            |
+| ---------------- | ---------------------------- | --------------------------------- |
+| **User**         | Data siswa/mentor            | Many-to-Many dengan Role          |
+| **Role**         | Role sistem (Admin, Student) | Many-to-Many dengan User          |
+| **Mission**      | Misi pembelajaran            | One-to-Many dengan Quiz           |
+| **Quiz**         | Soal quiz                    | Many-to-One dengan Mission        |
+| **Progress**     | Progress belajar siswa       | Many-to-One dengan User & Mission |
+| **Badge**        | Sistem badge reward          | One-to-Many dengan UserBadge      |
+| **UserBadge**    | Relasi user-badge            | Many-to-One dengan User & Badge   |
+| **Character**    | Sistem karakter              | One-to-Many dengan User           |
+| **AiContentLog** | Log penggunaan AI            | Many-to-One dengan User & Quiz    |
+
+### **Database Schema**
+
+```sql
+-- Users table with UUID primary key
+-- Roles table (Admin, Student)
+-- User_Roles pivot table for many-to-many relationship
+-- Missions table (title, description, subject, level, points)
+-- Quizzes table (question, options JSON, answer JSON)
+-- Progress table (user_id, mission_id, score, status, completed_at)
+-- Badges table (name, description, threshold, image)
+-- User_Badges table (user_id, badge_id, earned_at)
+-- Characters table (name, description, avatar)
+-- Ai_Content_Logs table (user_id, action_type, quiz_id, prompt, response)
+```
+
+## 🛡️ **Keamanan**
 
 - ✅ Helmet.js untuk security headers
 - ✅ CORS configuration yang fleksibel
 - ✅ Input validation dengan express-validator
-- ✅ Password hashing yang aman
-- ✅ JWT token dengan expiry time
-- ✅ Error handling yang tidak expose sensitive data
+- ✅ Password hashing dengan bcryptjs (salt rounds: 12)
+- ✅ JWT token dengan expiry time (15m access, 7d refresh)
+- ✅ Rate limiting untuk mencegah abuse
+- ✅ SQL injection protection dengan Sequelize ORM
+- ✅ XSS protection dengan input sanitization
 
-### 📊 **Logging & Monitoring**
+## 📊 **Logging & Monitoring**
 
 - ✅ Morgan dengan format custom dan visual indicators
 - ✅ Color-coded status codes untuk development
 - ✅ Environment-based logging (dev/production)
 - ✅ Request tracking yang lengkap dengan timestamp
-- ✅ Konfigurasi logging terpisah untuk maintainability
+- ✅ AI content usage logging untuk analytics
+- ✅ Error logging dengan stack trace
 
-### 🎯 **Developer Experience**
+## 🎯 **Developer Experience**
 
 - ✅ Hot Reload dengan nodemon untuk development
 - ✅ Environment configuration yang lengkap
@@ -76,25 +126,40 @@ Express Starter adalah template backend API yang siap pakai dan production-ready
 - ✅ Custom NPM scripts untuk model/migration/seeder generation
 - ✅ Error handling middleware yang comprehensive
 - ✅ Testing setup dengan Jest dan Supertest
+- ✅ API documentation dengan contoh request/response
 
-## �️ **Tech Stack & Dependencies**
+## � **Tech Stack & Dependencies**
 
-| Kategori           | Teknologi         | Versi  | Deskripsi                         |
-| ------------------ | ----------------- | ------ | --------------------------------- |
-| **Runtime**        | Node.js           | 18+    | JavaScript runtime environment    |
-| **Framework**      | Express.js        | 5.1.0  | Fast, unopinionated web framework |
-| **Database**       | MySQL             | 8.0+   | Relational database management    |
-| **ORM**            | Sequelize         | 6.37.7 | Promise-based ORM for Node.js     |
-| **Authentication** | JsonWebToken      | 9.0.2  | JWT implementation untuk auth     |
-| **Validation**     | Express Validator | 7.2.1  | Middleware untuk input validation |
-| **Email**          | Nodemailer        | 7.0.6  | Module untuk sending email        |
-| **Security**       | Helmet            | 8.1.0  | Security middleware collection    |
-| **Password**       | Bcryptjs          | 3.0.2  | Library untuk password hashing    |
-| **CORS**           | Cors              | 2.8.5  | Cross-Origin Resource Sharing     |
-| **Logging**        | Morgan            | 1.10.1 | HTTP request logger middleware    |
-| **Environment**    | Dotenv            | 17.2.2 | Environment variables loader      |
-| **Testing**        | Jest & Supertest  | 30.1.3 | Unit & integration testing        |
-| **UUID**           | UUID              | 12.0.0 | UUID generation library           |
+### **Core Dependencies**
+
+| Kategori           | Package            | Versi  | Deskripsi                         |
+| ------------------ | ------------------ | ------ | --------------------------------- |
+| **Runtime**        | Node.js            | 18+    | JavaScript runtime environment    |
+| **Framework**      | Express.js         | 5.1.0  | Fast, unopinionated web framework |
+| **Database**       | MySQL              | 8.0+   | Relational database management    |
+| **ORM**            | Sequelize          | 6.37.7 | Promise-based ORM untuk Node.js   |
+| **Authentication** | JsonWebToken       | 9.0.2  | JWT implementation untuk auth     |
+| **AI Integration** | @google/genai      | 1.20.0 | Google AI Gemini integration      |
+| **Validation**     | Express Validator  | 7.2.1  | Middleware untuk input validation |
+| **Email**          | Nodemailer         | 7.0.6  | Module untuk sending email        |
+| **Security**       | Helmet             | 8.1.0  | Security middleware collection    |
+| **Password**       | Bcryptjs           | 3.0.2  | Library untuk password hashing    |
+| **CORS**           | Cors               | 2.8.5  | Cross-Origin Resource Sharing     |
+| **Rate Limiting**  | Express Rate Limit | 8.1.0  | Rate limiting middleware          |
+| **File Upload**    | Multer             | 2.0.2  | Middleware untuk file upload      |
+| **UUID**           | UUID               | 12.0.0 | UUID generation library           |
+| **Compression**    | Compression        | 1.8.1  | Response compression middleware   |
+| **Cookie Parser**  | Cookie Parser      | 1.4.7  | Cookie parsing middleware         |
+
+### **Development Dependencies**
+
+| Package           | Versi  | Deskripsi                              |
+| ----------------- | ------ | -------------------------------------- |
+| **Jest**          | 30.1.3 | Unit & integration testing framework   |
+| **Supertest**     | 7.1.4  | HTTP endpoint testing library          |
+| **Nodemon**       | 3.1.10 | Development auto-restart tool          |
+| **Morgan**        | 1.10.1 | HTTP request logger middleware         |
+| **Sequelize CLI** | 6.6.3  | Command line interface untuk Sequelize |
 
 ## 📋 **Persyaratan Sistem**
 
@@ -102,31 +167,32 @@ Express Starter adalah template backend API yang siap pakai dan production-ready
 - **npm** >= 8.0.0
 - **MySQL** >= 8.0.0
 - **Git** (untuk version control)
+- **Google AI API Key** (untuk fitur AI)
 
 ## 🚀 **Instalasi & Setup**
 
-### 1. **Clone Repository**
+### **1. Clone Repository**
 
 ```bash
-git clone https://github.com/Brynnnn12/express-starter.git
-cd express-starter
+git clone https://github.com/Brynnnn12/backend-eduquest.git
+cd backend-eduquest
 ```
 
-### 2. **Install Dependencies**
+### **2. Install Dependencies**
 
 ```bash
 npm install
 ```
 
-### 3. **Environment Configuration**
+### **3. Environment Configuration**
 
-Buat file `.env` dan konfigurasikan sesuai kebutuhan:
+Buat file `.env` di root directory dan konfigurasikan sesuai kebutuhan:
 
 ```env
 # Database Configuration
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=express_starter
+DB_NAME=eduquest_db
 DB_USERNAME=root
 DB_PASSWORD=your_mysql_password
 
@@ -136,35 +202,48 @@ JWT_REFRESH_SECRET=your_super_secret_refresh_key_here_at_least_32_characters
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 
+# Google AI Configuration (WAJIB untuk fitur AI)
+AI_GEMINI_API_KEY=your_google_ai_gemini_api_key_here
+
 # Email Configuration (Opsional, untuk fitur email)
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_gmail_app_password
-MAIL_FROM=noreply@yourapp.com
+MAIL_FROM=noreply@eduquest.com
 
 # Application Configuration
 APP_URL=http://localhost:3000
 NODE_ENV=development
 PORT=3000
+
+# Upload Configuration
+UPLOAD_PATH=public/uploads
+MAX_FILE_SIZE=2097152
 ```
 
-### 4. **Database Setup**
+### **4. Setup Google AI API Key**
+
+1. Kunjungi [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Buat API key baru
+3. Copy API key dan paste ke `.env` file pada variabel `AI_GEMINI_API_KEY`
+
+### **5. Database Setup**
 
 ```bash
 # Buat database MySQL terlebih dahulu
 mysql -u root -p
-CREATE DATABASE express_starter;
+CREATE DATABASE eduquest_db;
 exit
 
 # Jalankan migration untuk membuat tabel
 npm run migrate
 
-# Seed data default (Role Admin/User + akun admin)
+# Seed data default (Role Admin/Student + akun admin)
 npm run seed
 ```
 
-### 5. **Jalankan Server**
+### **6. Jalankan Server**
 
 ```bash
 # Development mode dengan hot reload
@@ -176,7 +255,313 @@ npm start
 
 Server akan berjalan di: `http://localhost:3000`
 
-## 📚 **Script NPM yang Tersedia**
+## 📚 **API Endpoints**
+
+### **🔐 Authentication Endpoints**
+
+```http
+POST   /api/auth/register        # Registrasi siswa baru + email verifikasi
+POST   /api/auth/login           # Login (return access + refresh token)
+POST   /api/auth/refresh-token   # Refresh access token menggunakan refresh token
+POST   /api/auth/logout          # Logout user (invalidate tokens)
+POST   /api/auth/forgot-password # Request reset password via email
+POST   /api/auth/reset-password  # Reset password menggunakan token dari email
+GET    /api/auth/verify-email    # Verifikasi email dari link di email
+```
+
+### **👤 User Management Endpoints**
+
+```http
+GET    /api/profile              # Get profile user yang sedang login
+PUT    /api/profile              # Update profile user
+```
+
+### **🎓 Learning System Endpoints**
+
+```http
+# Missions
+GET    /api/missions             # List semua misi pembelajaran
+GET    /api/missions/:id         # Detail misi tertentu
+POST   /api/missions             # Buat misi baru (Admin only)
+PUT    /api/missions/:id         # Update misi (Admin only)
+DELETE /api/missions/:id         # Hapus misi (Admin only)
+
+# Quizzes
+GET    /api/quizzes              # List semua quiz
+GET    /api/quizzes/:id          # Detail quiz tertentu
+PUT    /api/quizzes/:id          # Update quiz (Admin only)
+DELETE /api/quizzes/:id          # Hapus quiz (Admin only)
+POST   /api/quizzes/submit       # Submit jawaban quiz
+
+# Progress
+GET    /api/progresses           # List progress user
+GET    /api/progresses/:id       # Detail progress tertentu
+
+# Characters
+GET    /api/characters           # List semua karakter
+GET    /api/characters/:id       # Detail karakter tertentu
+POST   /api/characters           # Buat karakter baru (Admin only)
+PUT    /api/characters/:id       # Update karakter (Admin only)
+DELETE /api/characters/:id       # Hapus karakter (Admin only)
+
+# Badges
+GET    /api/badges               # List semua badge
+GET    /api/badges/:id           # Detail badge tertentu
+POST   /api/badges               # Buat badge baru (Admin only)
+PUT    /api/badges/:id           # Update badge (Admin only)
+DELETE /api/badges/:id           # Hapus badge (Admin only)
+```
+
+### **🤖 AI-Powered Endpoints**
+
+```http
+GET    /api/quizzes/:quizId/hint      # Dapatkan hint dari AI (maks 2x per quiz)
+GET    /api/quizzes/:quizId/solution  # Dapatkan solusi lengkap dari AI (maks 1x per quiz)
+```
+
+## 🔑 **Default Credentials**
+
+Setelah menjalankan seeder, gunakan kredensial berikut untuk testing:
+
+**Admin Account:**
+
+- Email: `admin@eduquest.com`
+- Password: `admin123`
+- Role: `Admin`
+
+> ⚠️ **Penting**: Segera ganti password default ini setelah deployment ke production!
+
+## 📝 **Contoh Penggunaan API**
+
+### **Register Siswa Baru**
+
+```bash
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Ahmad Siswa",
+  "email": "ahmad@example.com",
+  "password": "password123",
+  "passwordConfirmation": "password123"
+}
+
+# Response Success:
+{
+  "success": true,
+  "message": "Registrasi berhasil. Silakan cek email untuk verifikasi.",
+  "data": {
+    "id": "uuid-here",
+    "name": "Ahmad Siswa",
+    "email": "ahmad@example.com"
+  }
+}
+```
+
+### **Login**
+
+```bash
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@eduquest.com",
+  "password": "admin123"
+}
+
+# Response Success:
+{
+  "success": true,
+  "message": "Login berhasil",
+  "data": {
+    "user": {
+      "name": "Admin User"
+    },
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+### **Membuat Misi Pembelajaran Baru**
+
+```bash
+POST /api/missions
+Authorization: Bearer <your_access_token>
+Content-Type: application/json
+
+{
+  "title": "Sejarah Perjuangan Bangsa Indonesia",
+  "description": "Pelajari tentang perjuangan bangsa Indonesia menuju kemerdekaan",
+  "subject": "Sejarah",
+  "level": "Menengah",
+  "points": 100
+}
+
+# Response Success:
+{
+  "success": true,
+  "message": "Berhasil Membuat Mission",
+  "data": {
+    "id": "uuid-here",
+    "title": "Sejarah Perjuangan Bangsa Indonesia",
+    "description": "Pelajari tentang perjuangan bangsa Indonesia menuju kemerdekaan",
+    "subject": "Sejarah",
+    "level": "Menengah",
+    "points": 100,
+    "created_by": "admin-uuid"
+  }
+}
+```
+
+### **Submit Jawaban Quiz**
+
+```bash
+POST /api/quizzes/submit
+Authorization: Bearer <your_access_token>
+Content-Type: application/json
+
+{
+  "mission_id": "mission-uuid-here",
+  "answers": [
+    {
+      "quiz_id": "quiz-uuid-1",
+      "user_answer": "a"
+    },
+    {
+      "quiz_id": "quiz-uuid-2",
+      "user_answer": "b"
+    }
+  ]
+}
+
+# Response Success:
+{
+  "success": true,
+  "message": "Berhasil submit jawaban & update progress",
+  "data": {
+    "score": 80,
+    "totalQuestions": 10,
+    "status": "completed",
+    "progress": {
+      "id": "progress-uuid",
+      "user_id": "user-uuid",
+      "mission_id": "mission-uuid",
+      "score": 80,
+      "status": "completed",
+      "completed_at": "2025-09-20T10:30:00.000Z"
+    }
+  }
+}
+```
+
+### **Mendapatkan Hint dari AI**
+
+```bash
+GET /api/quizzes/quiz-uuid/hint
+Authorization: Bearer <your_access_token>
+
+# Response Success:
+{
+  "success": true,
+  "message": "Berhasil mendapatkan hint",
+  "data": {
+    "hint": "Petunjuk: Budi Utomo adalah organisasi pergerakan nasional pertama di Indonesia yang didirikan oleh dr. Sutomo pada tahun 1908."
+  }
+}
+```
+
+## 📁 **Struktur Project**
+
+```
+backend-eduquest/
+├── src/                      # Source code utama
+│   ├── config/               # File konfigurasi
+│   │   ├── cors.js          # CORS middleware configuration
+│   │   ├── database.js      # Database configuration (Sequelize)
+│   │   ├── jwt.js           # JWT configuration & settings
+│   │   ├── mailer.js        # Email configuration (Nodemailer)
+│   │   └── rateLimiter.js   # Rate limiting configuration
+│   ├── controllers/          # Request handlers / Controllers
+│   │   ├── authController.js    # Authentication controllers
+│   │   ├── badgeController.js   # Badge management controllers
+│   │   ├── characterController.js # Character management controllers
+│   │   ├── missionController.js  # Mission management controllers
+│   │   ├── profileController.js  # User profile controllers
+│   │   ├── progressController.js # Progress tracking controllers
+│   │   └── quizController.js     # Quiz management controllers
+│   ├── middlewares/          # Custom middleware functions
+│   │   ├── authMiddleware.js    # JWT & role-based authorization
+│   │   └── errorHandler.js      # Global error handling
+│   ├── migrations/           # Database schema migrations
+│   │   ├── 20250908122856-create-user.js
+│   │   ├── 20250909025508-create-role.js
+│   │   └── ... (other migrations)
+│   ├── models/               # Sequelize models
+│   │   ├── index.js          # Models index & associations
+│   │   ├── user.js          # User model
+│   │   ├── role.js          # Role model
+│   │   ├── mission.js       # Mission model
+│   │   ├── quiz.js          # Quiz model
+│   │   ├── progres.js       # Progress model
+│   │   ├── badge.js         # Badge model
+│   │   ├── character.js     # Character model
+│   │   └── ... (other models)
+│   ├── routes/               # API routes
+│   │   ├── index.js         # Main routes index
+│   │   ├── authRoute.js     # Authentication routes
+│   │   ├── badgeRoute.js    # Badge routes
+│   │   ├── characterRoute.js # Character routes
+│   │   ├── missionRoute.js  # Mission routes
+│   │   ├── profileRoute.js  # Profile routes
+│   │   ├── progressRoute.js # Progress routes
+│   │   └── quizRoute.js     # Quiz routes
+│   ├── seeders/              # Database seeders
+│   │   ├── 20250909032531-create-roles.js
+│   │   └── 20250909032547-create-admin-user.js
+│   ├── services/             # Business logic layer
+│   │   ├── authService.js       # Authentication business logic
+│   │   ├── badgeService.js      # Badge business logic
+│   │   ├── characterService.js  # Character business logic
+│   │   ├── missionService.js    # Mission business logic
+│   │   ├── progressService.js   # Progress business logic
+│   │   ├── quizService.js       # Quiz business logic
+│   │   └── userBadgeService.js  # User badge business logic
+│   ├── templates/            # Email templates
+│   │   └── emailTemplate.js # HTML email templates
+│   ├── utils/                # Utility functions
+│   │   ├── aiHelper.js       # AI integration utilities
+│   │   ├── hashing.js        # Password hashing utilities
+│   │   ├── jwt.js            # JWT token utilities
+│   │   ├── multer.js         # File upload utilities
+│   │   ├── queryHelper.js    # Database query helpers
+│   │   ├── response.js       # Standardized API responses
+│   │   └── sendEmail.js      # Email sending utilities
+│   ├── validators/           # Input validation
+│   │   ├── authValidate.js   # Authentication validation rules
+│   │   ├── badgeValidate.js  # Badge validation rules
+│   │   ├── characterValidate.js # Character validation rules
+│   │   ├── missionValidate.js  # Mission validation rules
+│   │   └── profileValidate.js  # Profile validation rules
+│   └── server.js            # Express server entry point
+├── public/                   # Static files
+│   └── icons/               # Icon files
+├── __tests__/               # Test files
+│   ├── routes/              # Route tests
+│   │   ├── authRoute.test.js
+│   │   └── profileRoute.test.js
+│   └── utils/               # Utility tests
+│       ├── hash.test.js
+│       ├── jwt.test.js
+│       └── response.test.js
+├── .env.example            # Environment variables template
+├── .gitignore              # Git ignore rules
+├── package.json            # Dependencies & npm scripts
+├── package-lock.json       # Dependency lock file
+└── README.md               # Dokumentasi lengkap (file ini)
+```
+
+## 📊 **Scripts NPM yang Tersedia**
 
 ### **🏃‍♂️ Development & Testing**
 
@@ -184,7 +569,6 @@ Server akan berjalan di: `http://localhost:3000`
 npm run dev          # Jalankan server development dengan nodemon
 npm start            # Jalankan server production
 npm test             # Jalankan unit tests dengan Jest
-npm run test:watch   # Jalankan tests dalam watch mode
 ```
 
 ### **📦 Model, Migration & Seeder Generation**
@@ -221,324 +605,6 @@ npm run db:reset             # Reset database lengkap (drop + create)
 npm run db:setup             # Setup database fresh (migrate + seed)
 ```
 
-## 🎯 **API Endpoints**
-
-### **� Authentication Endpoints**
-
-```http
-POST   /api/auth/register        # Registrasi user baru + email verifikasi
-POST   /api/auth/login           # Login user (return access + refresh token)
-POST   /api/auth/refresh-token   # Refresh access token menggunakan refresh token
-POST   /api/auth/logout          # Logout user (invalidate tokens)
-POST   /api/auth/forgot-password # Request reset password via email
-POST   /api/auth/reset-password  # Reset password menggunakan token dari email
-GET    /api/auth/verify-email    # Verifikasi email dari link di email
-```
-
-### **👤 User Management Endpoints** (Coming Soon)
-
-```http
-GET    /api/users                # List semua users (Admin only)
-GET    /api/users/:id            # Get detail user tertentu
-PUT    /api/users/:id            # Update data user
-DELETE /api/users/:id            # Hapus user (Admin only)
-GET    /api/users/profile        # Get profile user yang sedang login
-```
-
-## 🔑 **Default Credentials**
-
-Setelah menjalankan seeder, gunakan kredensial berikut untuk testing:
-
-**Admin Account:**
-
-- Email: `admin@expressapp.com`
-- Password: `admin123`
-- Role: `Admin`
-
-> ⚠️ **Penting**: Segera ganti password default ini setelah deployment ke production!
-
-## 📝 **Contoh Penggunaan API**
-
-### **Register User Baru**
-
-```bash
-POST /api/auth/register
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "password123",
-  "passwordConfirmation": "password123"
-}
-
-# Response Success:
-{
-  "success": true,
-  "message": "Registrasi berhasil. Silakan cek email untuk verifikasi.",
-  "data": {
-    "id": "uuid-here",
-    "name": "John Doe",
-    "email": "john@example.com"
-  }
-}
-```
-
-### **Login**
-
-```bash
-POST /api/auth/login
-Content-Type: application/json
-
-{
-  "email": "admin@expressapp.com",
-  "password": "admin123"
-}
-
-# Response Success:
-{
-  "success": true,
-  "message": "Login berhasil",
-  "data": {
-    "user": {
-      "name": "Admin User"
-    },
-    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-  }
-}
-```
-
-### **Menggunakan Protected Route**
-
-```bash
-GET /api/protected-route
-Authorization: Bearer <your_access_token>
-```
-
-### **Refresh Token**
-
-```bash
-POST /api/auth/refresh-token
-Content-Type: application/json
-
-{
-  "refreshToken": "your_refresh_token_here"
-}
-```
-
-### **Forgot Password**
-
-```bash
-POST /api/auth/forgot-password
-Content-Type: application/json
-
-{
-  "email": "john@example.com"
-}
-```
-
-## 🛡️ **Authorization Middleware**
-
-### **Cara Penggunaan Middleware**
-
-```javascript
-const {
-  authenticateToken,
-  adminOnly,
-  checkRole,
-  ownerOrAdmin,
-} = require("./middlewares/authMiddleware");
-
-// Route yang memerlukan autentikasi
-router.get("/profile", authenticateToken, getProfile);
-
-// Route khusus admin saja
-router.get("/admin/dashboard", authenticateToken, adminOnly, getAdminDashboard);
-
-// Route untuk role tertentu (bisa multiple roles)
-router.get(
-  "/dashboard",
-  authenticateToken,
-  checkRole(["Admin", "User"]),
-  getDashboard
-);
-
-// Route untuk owner data tersebut atau admin
-router.put(
-  "/users/:userId",
-  authenticateToken,
-  ownerOrAdmin("userId"),
-  updateUser
-);
-```
-
-### **Middleware yang Tersedia**
-
-| Middleware                     | Deskripsi                   | Penggunaan              |
-| ------------------------------ | --------------------------- | ----------------------- |
-| `authenticateToken`            | Verifikasi JWT token        | Semua protected route   |
-| `adminOnly`                    | Hanya admin yang bisa akses | Route admin exclusive   |
-| `checkRole(['Admin', 'User'])` | Cek role specific           | Route berdasarkan role  |
-| `ownerOrAdmin('paramName')`    | Owner data atau admin       | Update/delete data user |
-
-## 📧 **Email Templates & Configuration**
-
-### **Template Email yang Tersedia**
-
-1. **Email Verifikasi** - Untuk aktivasi account baru
-2. **Email Reset Password** - Untuk reset password dengan token
-3. **Welcome Email** - Selamat datang setelah verifikasi berhasil
-
-### **Custom Email Template**
-
-```javascript
-const { createEmailTemplate } = require("./src/templates/emailTemplate");
-
-// Buat template email custom
-const customEmail = createEmailTemplate({
-  title: "Judul Email Anda",
-  heading: "Header Email",
-  message: "Pesan email yang ingin disampaikan...",
-  buttonText: "Tombol Action",
-  buttonUrl: "https://example.com/action",
-  companyName: "Nama Perusahaan Anda",
-});
-
-// Gunakan dengan nodemailer
-await sendEmail(email, subject, customEmail);
-```
-
-### **Konfigurasi Email Provider**
-
-#### **Gmail Configuration**
-
-```env
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=your_email@gmail.com
-MAIL_PASSWORD=your_app_password  # Bukan password biasa, gunakan App Password
-MAIL_FROM=noreply@yourapp.com
-```
-
-#### **Outlook/Hotmail Configuration**
-
-```env
-MAIL_HOST=smtp-mail.outlook.com
-MAIL_PORT=587
-MAIL_USERNAME=your_email@outlook.com
-MAIL_PASSWORD=your_password
-MAIL_FROM=noreply@yourapp.com
-```
-
-## 📁 **Struktur Project**
-
-```
-express-starter/
-├── src/                      # Source code utama
-│   ├── config/               # File konfigurasi
-│   │   ├── config.js         # Database configuration (Sequelize)
-│   │   ├── cors.js          # CORS middleware configuration
-│   │   ├── jwt.js           # JWT configuration & settings
-│   │   ├── mailer.js        # Email configuration (Nodemailer)
-│   │   └── morgan.js        # Custom Morgan logging configuration
-│   ├── controllers/          # Request handlers / Controllers
-│   │   └── authController.js # Authentication controllers
-│   ├── middlewares/          # Custom middleware functions
-│   │   ├── authMiddleware.js # JWT & role-based authorization
-│   │   └── errorHandler.js   # Global error handling
-│   ├── migrations/           # Database schema migrations
-│   │   ├── 20250908122856-create-user.js
-│   │   ├── 20250908123000-create-role.js
-│   │   └── 20250908123100-create-user-roles.js
-│   ├── models/               # Sequelize models
-│   │   ├── index.js          # Models index & associations
-│   │   ├── user.js          # User model
-│   │   └── role.js          # Role model
-│   ├── routes/               # API routes
-│   │   └── authRoute.js     # Authentication routes
-│   ├── seeders/              # Database seeders
-│   │   ├── 20250908124000-roles.js
-│   │   └── 20250908124100-admin-user.js
-│   ├── services/             # Business logic layer
-│   │   └── authService.js   # Authentication business logic
-│   ├── templates/            # Email templates
-│   │   └── emailTemplate.js # HTML email templates
-│   ├── utils/                # Utility functions
-│   │   ├── generateToken.js # JWT token generation
-│   │   ├── hashing.js       # Password hashing utilities
-│   │   ├── response.js      # Standardized API responses
-│   │   └── sendEmail.js     # Email sending utilities
-│   ├── validators/           # Input validation
-│   │   └── authValidate.js  # Authentication validation rules
-│   └── server.js            # Express server entry point
-├── tests/                    # Test files (Unit & Integration)
-│   ├── auth.test.js         # Authentication tests
-│   └── setup.js             # Test setup configuration
-├── .env.example             # Environment variables template
-├── .gitignore               # Git ignore rules
-├── package.json             # Dependencies & npm scripts
-├── package-lock.json        # Dependency lock file
-└── README.md               # Dokumentasi lengkap (file ini)
-```
-
-## 🛡️ **Konfigurasi Keamanan**
-
-### **JWT Configuration**
-
-File: `src/config/jwt.js`
-
-```javascript
-module.exports = {
-  access: {
-    secret: process.env.JWT_ACCESS_SECRET,
-    expiresIn: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
-  },
-  refresh: {
-    secret: process.env.JWT_REFRESH_SECRET,
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
-  },
-};
-```
-
-### **Database Configuration**
-
-File: `src/config/config.js`
-
-```javascript
-module.exports = {
-  development: {
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    dialect: "mysql",
-    define: {
-      underscored: true, // snake_case columns
-      freezeTableName: true, // tidak pluralize table names
-      timestamps: true, // created_at, updated_at
-    },
-  },
-};
-```
-
-### **CORS Configuration**
-
-File: `src/config/cors.js`
-
-```javascript
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "https://yourdomain.com",
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-```
-
 ## 🧪 **Testing**
 
 ### **Menjalankan Tests**
@@ -552,11 +618,11 @@ npm run test:coverage        # Run tests dengan coverage report
 ### **Contoh Test File**
 
 ```javascript
-// tests/auth.test.js
+// __tests__/routes/authRoute.test.js
 const request = require("supertest");
-const app = require("../src/server");
+const app = require("../../src/server");
 
-describe("Authentication", () => {
+describe("Authentication Routes", () => {
   test("should register new user", async () => {
     const res = await request(app).post("/api/auth/register").send({
       name: "Test User",
@@ -591,10 +657,14 @@ DB_NAME=your_production_db_name
 JWT_ACCESS_SECRET=your_super_strong_secret_at_least_64_characters_long
 JWT_REFRESH_SECRET=your_super_strong_refresh_secret_at_least_64_characters_long
 
+# Google AI (WAJIB untuk fitur AI)
+AI_GEMINI_API_KEY=your_production_google_ai_api_key
+
 # Email Production
 MAIL_HOST=smtp.your-provider.com
 MAIL_USERNAME=your_production_email
 MAIL_PASSWORD=your_production_email_password
+MAIL_FROM=noreply@eduquest.com
 ```
 
 #### **Production Checklist**
@@ -617,7 +687,7 @@ MAIL_PASSWORD=your_production_email_password
 npm install -g pm2
 
 # Jalankan aplikasi dengan PM2
-pm2 start src/server.js --name "express-starter"
+pm2 start src/server.js --name "eduquest-backend"
 
 # Setup auto-restart on reboot
 pm2 startup
@@ -625,59 +695,7 @@ pm2 save
 
 # Monitor aplikasi
 pm2 status
-pm2 logs express-starter
-```
-
-### **Docker Deployment**
-
-```dockerfile
-FROM node:18-alpine
-
-# Create app directory
-WORKDIR /app
-
-# Install dependencies
-COPY package*.json ./
-RUN npm ci --only=production
-
-# Copy app source
-COPY . .
-
-# Expose port
-EXPOSE 3000
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
-USER nodejs
-
-CMD ["npm", "start"]
-```
-
-```yaml
-# docker-compose.yml
-version: "3.8"
-services:
-  api:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DB_HOST=mysql
-    depends_on:
-      - mysql
-
-  mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_DATABASE: express_starter
-      MYSQL_ROOT_PASSWORD: rootpassword
-    volumes:
-      - mysql_data:/var/lib/mysql
-
-volumes:
-  mysql_data:
+pm2 logs eduquest-backend
 ```
 
 ## 🐛 **Troubleshooting**
@@ -703,36 +721,17 @@ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'your_pas
 FLUSH PRIVILEGES;
 ```
 
-### **Migration & Seeding Errors**
+### **Google AI API Issues**
 
-```bash
-# Reset semua migration dan mulai dari awal
-npm run migrate:undo:all
-npm run migrate
-
-# Jika ada constraint error
-npm run db:reset  # Hati-hati: ini akan menghapus semua data!
-
-# Cek status migration
-npx sequelize-cli db:migrate:status
-```
+- **API Key Invalid**: Pastikan `AI_GEMINI_API_KEY` sudah benar di `.env`
+- **Quota Exceeded**: Cek usage limit di Google AI Studio
+- **Network Issues**: Pastikan koneksi internet stabil
 
 ### **JWT Token Issues**
 
-- **Token Invalid**: Pastikan `JWT_ACCESS_SECRET` dan `JWT_REFRESH_SECRET` sudah di-set di `.env`
+- **Token Invalid**: Pastikan `JWT_ACCESS_SECRET` dan `JWT_REFRESH_SECRET` sudah di-set
 - **Token Expired**: Gunakan refresh token untuk mendapatkan access token baru
 - **Headers Missing**: Pastikan format: `Authorization: Bearer <token>`
-
-```javascript
-// Debug JWT token
-const jwt = require("jsonwebtoken");
-try {
-  const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-  console.log("Token valid:", decoded);
-} catch (error) {
-  console.log("Token error:", error.message);
-}
-```
 
 ### **Email Sending Issues**
 
@@ -741,41 +740,11 @@ try {
 ```bash
 # 1. Enable 2-Factor Authentication di Gmail
 # 2. Generate App Password di Google Account Settings
-# 3. Gunakan App Password (bukan password biasa)
+# 3. Gunakan App Password (bukan password biasa, tanpa spasi)
 
 MAIL_USERNAME=your_email@gmail.com
-MAIL_PASSWORD=your_16_character_app_password  # Format: abcd efgh ijkl mnop
+MAIL_PASSWORD=abcd1234efgh5678  # 16 karakter App Password
 ```
-
-#### **Common Email Errors**
-
-- **Invalid login**: Gunakan App Password untuk Gmail
-- **Connection timeout**: Cek firewall dan port 587
-- **Authentication failed**: Pastikan credentials benar
-
-### **Development Issues**
-
-```bash
-# Port sudah digunakan
-# Windows:
-netstat -ano | findstr :3000
-taskkill /PID <PID> /F
-
-# Linux/Mac:
-lsof -ti:3000 | xargs kill -9
-
-# Clear npm cache jika ada masalah install
-npm cache clean --force
-rm -rf node_modules package-lock.json
-npm install
-```
-
-### **Production Issues**
-
-- **Memory leak**: Monitor dengan PM2 dan setup auto-restart
-- **Database timeout**: Setup connection pool dengan `maxConcurrentQueries`
-- **Log files terlalu besar**: Setup log rotation
-- **Performance slow**: Implementasi caching dan database indexing
 
 ## 📈 **Performance Optimization**
 
@@ -787,38 +756,32 @@ npm install
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.addIndex("users", ["email"]);
-    await queryInterface.addIndex("users", ["created_at"]);
-    await queryInterface.addIndex("user_roles", ["user_id", "role_id"]);
+    await queryInterface.addIndex("progress", ["user_id", "mission_id"]);
+    await queryInterface.addIndex("ai_content_logs", [
+      "user_id",
+      "action_type",
+    ]);
   },
 };
 ```
 
-### **Caching Strategy**
+### **AI Content Caching**
 
 ```javascript
-// Implementasi Redis untuk session caching (optional)
-const redis = require("redis");
-const client = redis.createClient();
+// Implementasi caching untuk AI responses (optional)
+const NodeCache = require("node-cache");
+const cache = new NodeCache({ stdTTL: 3600 }); // 1 hour TTL
 
-// Cache user data setelah login
-await client.setex(`user:${userId}`, 3600, JSON.stringify(userData));
-```
+// Cache hint responses
+const cachedHint = cache.get(`hint_${quizId}_${userId}`);
+if (cachedHint) {
+  return cachedHint;
+}
 
-### **Security Enhancements**
-
-```javascript
-// Rate limiting untuk API endpoints
-const rateLimit = require("express-rate-limit");
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
-  message: "Too many authentication attempts, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-app.use("/api/auth/login", authLimiter);
+// Generate new hint and cache it
+const hint = await generateHint(quizId);
+cache.set(`hint_${quizId}_${userId}`, hint);
+return hint;
 ```
 
 ## 🤝 **Contributing**
@@ -826,9 +789,9 @@ app.use("/api/auth/login", authLimiter);
 Kontribusi sangat diterima! Untuk berkontribusi:
 
 1. **Fork** repository ini
-2. Buat **feature branch** (`git checkout -b feature/amazing-feature`)
-3. **Commit** perubahan Anda (`git commit -m 'Add: amazing feature'`)
-4. **Push** ke branch (`git push origin feature/amazing-feature`)
+2. Buat **feature branch** (`git checkout -b feature/fitur-baru`)
+3. **Commit** perubahan Anda (`git commit -m 'Add: fitur baru yang awesome'`)
+4. **Push** ke branch (`git push origin feature/fitur-baru`)
 5. Buat **Pull Request**
 
 ### **Coding Standards**
@@ -838,42 +801,9 @@ Kontribusi sangat diterima! Untuk berkontribusi:
 - Follow **conventional commits** format
 - Dokumentasi yang lengkap untuk public APIs
 
-### **Pull Request Guidelines**
-
-- Deskripsi yang jelas tentang perubahan
-- Include tests untuk code changes
-- Update README jika diperlukan
-- Pastikan semua tests pass
-
-## 📝 **Changelog**
-
-### **v1.0.0** (2025-01-09)
-
-- ✨ **Initial Release** - Complete authentication system
-- 🔐 **JWT Authentication** - Access & refresh token implementation
-- 👥 **Role Management** - Admin & User roles with middleware
-- 📧 **Email System** - Modern responsive email templates
-- 🗄️ **Database Setup** - MySQL + Sequelize with migrations & seeders
-- 📊 **Logging** - Custom Morgan configuration with visual indicators
-- 🧪 **Testing** - Jest & Supertest setup
-- 📚 **Documentation** - Comprehensive Indonesian documentation
-- 🛡️ **Security** - Helmet, CORS, input validation, password hashing
-- 🎯 **Developer Experience** - Custom npm scripts, hot reload, error handling
-
-### **Upcoming Features** (v1.1.0)
-
-- [ ] **User Management** - Complete CRUD operations untuk users
-- [ ] **Email Templates** - More template variations
-- [ ] **File Upload** - Profile picture upload dengan multer
-- [ ] **API Documentation** - Swagger/OpenAPI integration
-- [ ] **Rate Limiting** - Built-in rate limiting untuk security
-- [ ] **Caching** - Redis integration untuk performance
-- [ ] **Monitoring** - Health check endpoints
-- [ ] **Docker** - Complete containerization
-
 ## 📄 **License**
 
-Proyek ini dilisensikan di bawah **brynnnn12 License**.
+Proyek ini dilisensikan di bawah **MIT License**.
 
 ```
 MIT License
@@ -902,9 +832,9 @@ SOFTWARE.
 ## 👨‍💻 **Author**
 
 <div align="center">
-  <img src="https://github.com/Brynnnn12.png" alt="Bryan Kurnia" width="100" height="100" style="border-radius: 50%;">
-  
-  **Bryan Kurnia Akbar**
+  <img src="https://github.com/Brynnnn12.png" alt="Bryan Kurnia Akbar" width="100" height="100" style="border-radius: 50%;">
+
+**Bryan Kurnia Akbar**
 
 </div>
 
@@ -919,42 +849,22 @@ Terima kasih kepada:
 
 - **[Express.js Team](https://expressjs.com/)** - Framework web yang luar biasa cepat dan minimal
 - **[Sequelize Team](https://sequelize.org/)** - ORM modern untuk Node.js yang powerful
+- **[Google AI](https://ai.google.dev/)** - AI Gemini untuk fitur pembelajaran interaktif
 - **[JWT.io](https://jwt.io/)** - Implementasi JSON Web Token yang reliable
-- **[Nodemailer](https://nodemailer.com/)** - Module terbaik untuk sending emails dari Node.js
+- **[Nodemailer](https://nodemailer.com/)** - Module terbaik untuk sending emails
 - **[MySQL](https://www.mysql.com/)** - Database management system yang robust
 - **Open Source Community** - Untuk semua kontribusi dan inspirasi
 - **Stack Overflow Community** - Untuk solusi-solusi technical yang membantu
-- **GitHub** - Platform amazing untuk code collaboration
-
-## 🌟 **Support & Community**
-
-### **Getting Help**
-
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/Brynnnn12/express-starter/issues)
-- 💡 **Feature Requests**: [GitHub Discussions](https://github.com/Brynnnn12/express-starter/discussions)
-- 📖 **Documentation**: [Wiki Pages](https://github.com/Brynnnn12/express-starter/wiki)
-- 💬 **Community**: [Discord Server](#) (Coming Soon)
-
-### **Show Your Support**
-
-Jika proyek ini membantu Anda, jangan lupa untuk:
-
-- ⭐ **Star** repository ini
-- 🍴 **Fork** untuk experiment sendiri
-- 📢 **Share** ke developer lain
-- 💝 **Contribute** dengan pull request
 
 ---
 
 <div align="center">
-  
-  **🚀 Happy Coding! 🚀**
-  
-  *Dibuat dengan ❤️ oleh Bryan Kurnia untuk komunitas developer Indonesia*
-  
-  [![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com/Brynnnn12)
-  [![Indonesian](https://img.shields.io/badge/Made%20in-🇮🇩%20Indonesia-red.svg)](https://github.com/Brynnnn12)
-  
-  **Jika repository ini bermanfaat, berikan ⭐ untuk mendukung development selanjutnya!**
 
-</div>
+**🚀 EduQuest - Belajar Jadi Lebih Menyenangkan dengan AI! 🚀**
+
+_Dibuat dengan ❤️ oleh Bryan Kurnia untuk komunitas pendidikan Indonesia_
+
+[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg)](https://github.com/Brynnnn12)
+[![Indonesian](https://img.shields.io/badge/Made%20in-🇮🇩%20Indonesia-red.svg)](https://github.com/Brynnnn12)
+
+**Jika repository ini bermanfaat, berikan ⭐ untuk mendukung development selanjutnya!**
